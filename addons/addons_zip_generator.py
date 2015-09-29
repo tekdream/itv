@@ -38,7 +38,8 @@ class Generator:
                     version1 = '.'.join(new_version)
                     open(_path, "w").write(data.replace(version, version1, 1))
                     version = version1
-                filenamezip = '.\\' + addon + '.\\' + addon + '-' + version
+                filenamezip = os.path.join(os.getcwd(),addon,addon + '-' + version)
+                #filenamezip = '.\\' + addon + '.\\' + addon + '-' + version
                 print addon
                 zf = zipfile.ZipFile(filenamezip + ".zip", "w")
                 for dirname, subdirs, files in os.walk(addon):

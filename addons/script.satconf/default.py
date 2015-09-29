@@ -84,6 +84,50 @@ def dl_restore():
     except:
         show_error("Error")
 
+def dl_rcuconf():
+    try:
+        if not os.path.exists("/storage/.kodi/userdata/keymaps"):
+            os.makedirs("/storage/.kodi/userdata/keymaps/")
+        urllib.urlretrieve("http://84.22.103.245/keymaps/gen.xml", "/storage/.kodi/userdata/keymaps/keyboard.xml")
+        # meheh. not an error
+        show_error("done. now restart kodi")
+    except:
+        show_error("Error")
+
+
+def dl_tvh_sdc():
+    try:
+        if not os.path.isdir('/storage/.kodi/userdata/addon_data/service.multimedia.tvheadend'):
+            show_error("tvheadend not installed")
+            exit(0)
+        execute("systemctl stop service.multimedia.tvheadend.service")
+        removeDir("/storage/.kodi/userdata/addon_data/service.multimedia.tvheadend/input/linuxdvb/adapters")
+        os.makedirs("/storage/.kodi/userdata/addon_data/service.multimedia.tvheadend/input/linuxdvb/adapters")
+        urllib.urlretrieve("http://84.22.103.245/lnb/51438d1ecd9318be113df0e7cddf46ea", "/storage/.kodi/userdata/addon_data/service.multimedia.tvheadend/input/linuxdvb/adapters/51438d1ecd9318be113df0e7cddf46ea")
+        execute("systemctl restart service.multimedia.tvheadend.service")
+    except:
+        show_error("Error")
+
+def dl_tvh_tdc():
+    try:
+        if not os.path.isdir('/storage/.kodi/userdata/addon_data/service.multimedia.tvheadend'):
+            show_error("tvheadend not installed")
+            exit(0)
+        execute("systemctl stop service.multimedia.tvheadend.service")
+        removeDir("/storage/.kodi/userdata/addon_data/service.multimedia.tvheadend/input/linuxdvb/adapters")
+        os.makedirs("/storage/.kodi/userdata/addon_data/service.multimedia.tvheadend/input/linuxdvb/adapters")
+        urllib.urlretrieve("http://84.22.103.245/lnb/twin/51438d1ecd9318be113df0e7cddf46ea", "/storage/.kodi/userdata/addon_data/service.multimedia.tvheadend/input/linuxdvb/adapters/51438d1ecd9318be113df0e7cddf46ea")
+        urllib.urlretrieve("http://84.22.103.245/lnb/twin/681e8b6ccbe787334dc80186a64734d2", "/storage/.kodi/userdata/addon_data/service.multimedia.tvheadend/input/linuxdvb/adapters/681e8b6ccbe787334dc80186a64734d2")
+        execute("systemctl restart service.multimedia.tvheadend.service")
+    except:
+        show_error("Error")
+
+def clear_recordings():
+    try:
+        execute("rm -rf /storage/recordings/*")
+    except:
+        show_error("Error")
+
 # =============================
 addon = xbmcaddon.Addon()
 
@@ -101,12 +145,28 @@ RESTORE_FILE = "201505051212.tar"
 RESTORE_URL = "http://84.22.103.245/restore/%s" % RESTORE_FILE
 
 dlg = xbmcgui.Dialog()
-res = dlg.select("SatConf", ["Download Oscam Config", "Download Tvheadend Channel List", "Download Restore File"])
+res = dlg.select("SatConf", [
+    "1. Download User Settings",
+    "2. Download Channel Fix",
+    "3. Download Restore File",
+    "4. Download Big Remote xml",
+    "5. Single Dish Connection",
+    "6. Twin Dish Connection",
+    "7. Clear recordings"
+])
 if res == 0:
     dl_oscam()
 elif res == 1:
     dl_tvh()
 elif res == 2:
     dl_restore()
+elif res == 3:
+    dl_rcuconf()
+elif res == 4:
+    dl_tvh_sdc()
+elif res == 5:
+    dl_tvh_tdc()
+elif res == 6:
+    clear_recordings()
 else:
     pass
