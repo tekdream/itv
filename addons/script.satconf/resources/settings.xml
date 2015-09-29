@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+	<setting id="USER" type="text" label="1001" default="" />
+	<setting id="PASS" type="text" label="1002" default="" />
+</settings>

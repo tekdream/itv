@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="plugin.video.irishtv"
+       name="Irish TV"
+       version="2.1.6"
+       provider-name="mossy">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+        <import addon="script.module.socksipy" version="2.0.0"/>
+        <import addon="script.module.pyamf" version="0.6.1"/>
+    	<import addon="script.module.beautifulsoup"/>
+    	<import addon="script.module.simplejson"/>
+        <import addon="script.module.requests" version="2.2.1"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource"
+               library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+	<language>en</language>
+        <platform>all</platform>
+        <summary>Irish TV On Demand</summary>
+        <description>Catchup with RTE, TV3, TG4, UTV Ireland or watch live with AerTV.</description>
+        <disclaimer>May not work outside Ireland. AerTV is subscription only and so will only be available to AerTV Plus and Platinum subscribers (set your login details in the plugin settings).</disclaimer>
+        <license>GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007</license>
+        <forum>http://forum.xbmc.org/showthread.php?tid=152897</forum>
+        <website>http://code.google.com/p/mossy-xbmc-repo/</website>
+        <source>http://code.google.com/p/plugin-video-irishtv/source/browse/</source>
+    </extension>
+</addon>

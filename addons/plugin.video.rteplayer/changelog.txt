@@ -1,0 +1,11 @@
+[B]Version 2.0.0[/B]
+Update libraries
+
+[B]Version 1.0.0[/B]
+
+First release of RTE Player with version 1.0.0
+It includes:
+ - RTE Player
+ - RTE Live
+ - Last 10 Recently Browsed Programs
+

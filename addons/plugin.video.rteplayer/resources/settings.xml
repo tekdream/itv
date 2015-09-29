@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+    <!--RTE-->
+    <category label="30075">
+        <setting id="ads" type="bool" label="30070" default="true" />
+    </category>
+    
+</settings>
