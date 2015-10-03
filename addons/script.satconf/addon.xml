@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="script.satconf"
        name="SatConf"
-       version="1.0.7"
+       version="1.0.8"
        provider-name="meh">
    <requires>
      <import addon="xbmc.python" version="2.1.0"/>
      <import addon="script.module.requests" version="2.4.3"/>
-     <import addon="service.softcam.oscam" version="0.0.0"/>
-     <import addon="service.multimedia.tvheadend" version="0.0.0"/>
+     <import addon="service.softcam.oscam" version="1.0.0"/>
+     <import addon="service.multimedia.tvheadend" version="1.0.0"/>
   </requires>
   <extension point="xbmc.python.script" library="default.py">
     <provides>executable</provides>
