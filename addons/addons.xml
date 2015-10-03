@@ -632,7 +632,7 @@
 
 <addon id="script.satconf"
        name="SatConf"
-       version="1.0.6"
+       version="1.0.7"
        provider-name="meh">
    <requires>
      <import addon="xbmc.python" version="2.1.0"/>

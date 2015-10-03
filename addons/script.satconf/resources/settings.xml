@@ -2,4 +2,8 @@
 <settings>
 	<setting id="USER" type="text" label="1001" default="" />
 	<setting id="PASS" type="text" label="1002" default="" />
+    <setting type="lsep" label="If you do not have a password, please text" visible="eq(-1,)" />
+    <setting type="lsep" label="your mac address below to 089 2370450" visible="eq(-2,)" />
+
+    <setting id="mac.address" type="action" label="MAC Address" default="" />
 </settings>
