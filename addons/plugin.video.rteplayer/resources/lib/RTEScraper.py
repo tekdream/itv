@@ -84,6 +84,19 @@ from HTMLParser import HTMLParser
 def clean(text):
     return HTMLParser().unescape(text)
 
+def normalize(name, onlyDecode=False):
+    from unicodedata import normalize
+    import types
+    if type(name) == types.StringType:
+        unicode_name = name.decode('unicode-escape')
+    else:
+        try:
+            unicode_name = name.encode('latin-1').decode('utf-8')  # to latin-1
+        except:
+            unicode_name = name
+    normalize_name = unicode_name if onlyDecode else normalize('NFKD', unicode_name)
+    return normalize_name.encode('ascii', 'ignore')
+
 class RTE:
     def __init__(self):
         # We'll try to keep this up to date automatically, but this is a good starting guess
@@ -107,8 +120,8 @@ class RTE:
 
         items = self.soup.findAll('entry')
         for item in items:
-            id = str(item.id.string).strip()
-            title = str(item.title.string).strip()
+            id = normalize(item.id.string).strip()
+            title = normalize(item.title.string).strip()
             title = clean(title)
             try:
                 keys = self.KNOWN_RTE_SHOWS[title].keys()
@@ -273,21 +286,17 @@ class RTE:
         splitString = re.findall('(.*)__(.*)',combinedShowID)
         titleShowID = str(splitString[0][0])
         urlShowID = str(splitString[0][1])
-
         page = urllib2.urlopen(PROGRAMME_URL + titleShowID)
         soup = BeautifulSoup(page, selfClosingTags=['link','category','media:player','media:thumbnail'])
         page.close()
-
         items = soup.findAll('entry')
-        if not items:
-            # OK, that didn't work.
-            # Just try the straight URL id
-            print "************"
-            print urlShowID
-            page = urllib2.urlopen(urlShowID)
-            soup = BeautifulSoup(page, selfClosingTags=['link','category','media:player','media:thumbnail'])
-            page.close()
-            items = soup.findAll('entry')
+        # if not items:
+        #     # OK, that didn't work.
+        #     # Just try the straight URL id
+        #     page = urllib2.urlopen(urlShowID)
+        #     soup = BeautifulSoup(page, selfClosingTags=['link','category','media:player','media:thumbnail'])
+        #     page.close()
+        #     items = soup.findAll('entry')
 
         for item in items:
             try:
