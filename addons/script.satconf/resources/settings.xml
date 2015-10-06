@@ -2,8 +2,10 @@
 <settings>
 	<setting id="USER" type="text" label="1001" default="" />
 	<setting id="PASS" type="text" label="1002" default="" />
-    <setting type="lsep" label="If you do not have a password, please text" visible="eq(-1,)" />
-    <setting type="lsep" label="your mac address below to 089 2370450" visible="eq(-2,)" />
+    <setting type="lsep" label="If you do not have a password, please text the mac address" visible="eq(-1,)" />
+    <setting type="lsep" label="located on the bottom of your unit to 089 2370450" visible="eq(-2,)" />
+    <setting type="lsep" label="Example: MAC:XX XX XX XX XX XX" visible="eq(-3,)" />
+    <setting type="lsep" label="Everything after the : without spaces" visible="eq(-4,)" />
 
-    <setting id="mac.address" type="action" label="MAC Address" default="" />
+    <!-- setting id="mac.address" type="action" label="MAC Address" default="" / -->
 </settings>
