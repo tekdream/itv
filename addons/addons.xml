@@ -691,21 +691,22 @@
 </addon>
 
 <addon id="service.softcam.oscam"
-       name="oscam"
-       version="6.0.1"
-       provider-name="Stefan Saraev (seo at irc.freenode.net)">
+       name="oscam-emu modded"
+       version="6.12.11105"
+       provider-name="Stefan Saraev (seo at irc.freenode.net) modded byGuRu">
   <requires>
     <import addon="os.openelec.tv" version="5.0"/>
     <import addon="xbmc.python" version="2.1.0"/>
 
   </requires>
   <extension point="xbmc.service" library="default.py">
-    <provides></provides>
+    <provides>executable</provides>
   </extension>
   <extension point="xbmc.addon.metadata">
-    <summary>oscam: OSCam is Open Source Conditional Access Modul.</summary>
+    <summary>oscam-emu modded by GuRu: OSCam is Open Source Conditional Access Modul.</summary>
     <description>
-OSCam is Open Source Conditional Access Modul.
+OSCam-emu is Open Source Conditional Access Modul.
+modded by GuRu
     </description>
     <disclaimer>
 using oscam may be illegal in your country. if in doubt, do not install

@@ -1,0 +1,6 @@
+
+--This line, and those below, will be ignored--
+
+A    addons/generate-repo.sh
+AM   addons/script.satconf/script.satconf-1.0.6.zip
+AM   addons/service.softcam.oscam/service.softcam.oscam-6.0.1.zip

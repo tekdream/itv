@@ -30,7 +30,7 @@ mkdir -p $ADDON_HOME/log
 
 touch $ADDON_HOME/config/oscam.ac
 touch $ADDON_HOME/config/oscam.cert
-touch $ADDON_HOME/config/oscam.dvbapi
+#touch $ADDON_HOME/config/oscam.dvbapi
 touch $ADDON_HOME/config/oscam.guess
 touch $ADDON_HOME/config/oscam.ird
 touch $ADDON_HOME/config/oscam.provid
@@ -38,10 +38,22 @@ touch $ADDON_HOME/config/oscam.server
 touch $ADDON_HOME/config/oscam.services
 touch $ADDON_HOME/config/oscam.srvid
 touch $ADDON_HOME/config/oscam.tiers
-touch $ADDON_HOME/config/oscam.user
+#touch $ADDON_HOME/config/oscam.user
 
 if [ ! -f "$ADDON_HOME/config/oscam.conf" ]; then
   cp $ADDON_DIR/oscam-default.conf $ADDON_HOME/config/oscam.conf
+fi
+
+if [ ! -f "$ADDON_HOME/config/Softcam.key" ]; then
+  cp $ADDON_DIR/Softcam.key $ADDON_HOME/config/Softcam.key
+fi
+
+if [ ! -f "$ADDON_HOME/config/oscam.user" ]; then
+  cp $ADDON_DIR/oscam.user $ADDON_HOME/config/oscam.user
+fi
+
+if [ ! -f "$ADDON_HOME/config/oscam.dvbapi" ]; then
+  cp $ADDON_DIR/oscam.dvbapi $ADDON_HOME/config/oscam.dvbapi
 fi
 
 chmod a+x $ADDON_DIR/bin/*

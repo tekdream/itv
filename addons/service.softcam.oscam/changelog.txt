@@ -1,5 +1,5 @@
-6.0.0
-- (test) uodate to oscam-10975
+4.3.7
+- update to oscam-10615
 
 4.3.6
 - update to oscam-10607

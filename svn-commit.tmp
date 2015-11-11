@@ -1,0 +1,35 @@
+
+--This line, and those below, will be ignored--
+
+M    addons/addons.xml
+M    addons/addons.xml.md5
+M    addons/plugin.video.genesis/plugin.video.genesis-5.0.8.zip
+M    addons/plugin.video.irishtv/plugin.video.irishtv-2.1.6.zip
+M    addons/plugin.video.rteplayer/plugin.video.rteplayer-2.0.0.zip
+M    addons/plugin.video.youtube/plugin.video.youtube-5.1.9.zip
+M    addons/repository.irishtvtwo/repository.irishtvtwo-1.0.8.zip
+M    addons/repository.thegizmo/repository.thegizmo-0.0.1.zip
+M    addons/script.module.addon.common/script.module.addon.common-2.0.0.zip
+M    addons/script.module.addon.signals/script.module.addon.signals-0.0.1.zip
+M    addons/script.module.arrow/script.module.arrow-0.5.4.zip
+M    addons/script.module.beautifulsoup4/script.module.beautifulsoup4-4.3.2.zip
+M    addons/script.module.dateutil/script.module.dateutil-2.4.2.zip
+M    addons/script.module.feedparser/script.module.feedparser-5.2.1.zip
+M    addons/script.module.hachoir/script.module.hachoir-1.3.3.zip
+M    addons/script.module.html5lib/script.module.html5lib-0.999.0.zip
+M    addons/script.module.libtorrent/script.module.libtorrent-0.16.19i.zip
+M    addons/script.module.mctools/script.module.mctools-0.0.10.zip
+M    addons/script.module.metahandler/script.module.metahandler-2.8.0.zip
+M    addons/script.module.myconnpy/script.module.myconnpy-1.1.7.zip
+M    addons/script.module.requests/script.module.requests-2.7.0.zip
+M    addons/script.module.simplejson/script.module.simplejson-3.3.0.zip
+M    addons/script.module.six/script.module.six-1.9.0.zip
+M    addons/script.module.t0mm0.common/script.module.t0mm0.common-2.1.1.zip
+M    addons/script.module.torrent.ts/script.module.torrent.ts-0.6.0.28a.zip
+M    addons/script.module.trakt/script.module.trakt-2.3.3.zip
+M    addons/script.module.unidecode/script.module.unidecode-0.4.16.zip
+M    addons/script.module.urlresolver/script.module.urlresolver-2.10.0.zip
+M    addons/script.module.xbmcswift2/script.module.xbmcswift2-2.4.0.zip
+M    addons/script.module.youtube.dl/script.module.youtube.dl-15.318.0.zip
+M    addons/skin.aeon.nox.5/skin.aeon.nox.5-10.0.0.zip
+M    addons/skin.arctic.zephyr/skin.arctic.zephyr-2.0.0.zip
