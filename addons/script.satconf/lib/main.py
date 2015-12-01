@@ -7,7 +7,6 @@ import struct
 import requests
 import hashlib
 import os
-import subprocess
 import shutil
 import tarfile
 import util
@@ -22,6 +21,7 @@ RESTORE_FILE = "20150505121212.tar"
 RESTORE_URL = "http://84.22.103.245/restore/{0}".format(RESTORE_FILE)
 BACKUP_PATH = "/storage/backup/{0}".format(RESTORE_FILE)
 
+OSCAM_PATH = '/storage/.kodi/userdata/addon_data/service.softcam.oscam/config/oscam.server'
 
 class DownloadCanceledException(Exception):
     pass
@@ -74,14 +74,6 @@ def get_mac(ifname):
         return '00000000'
 
 
-def execute(command_line):
-    try:
-        process = subprocess.Popen(command_line, shell=True, close_fds=True)
-        process.wait()
-    except:
-        pass
-
-
 def removeDir(path):
     if os.path.isdir(path):
         shutil.rmtree(path)
@@ -91,6 +83,22 @@ def extractTar(file, path):
     tfile = tarfile.open(file)
     if tarfile.is_tarfile(file):
         tfile.extractall(path)
+
+
+def checkOscamServer():
+    if not os.path.exists(OSCAM_PATH):
+        return False
+
+    return os.path.getsize(OSCAM_PATH) != 597
+
+
+def notifyInvalidOscamServer():
+    if checkOscamServer():
+        return False
+
+    show_error("Your user and password is not correct. Please contact tech support with you MAC address to get the correct user and password")
+
+    return True
 
 
 def dl_oscam():
@@ -113,9 +121,10 @@ def dl_oscam():
             show_error("oscam not installed")
             return
 
-        execute("systemctl stop service.softcam.oscam.service")
-        downloadWithProgress(chlist_url, "/storage/.kodi/userdata/addon_data/service.softcam.oscam/config/oscam.server", 'Downloading user settings...')
-        execute("systemctl restart service.softcam.oscam.service")
+        with util.ServiceControl('service.softcam.oscam.service'):
+            downloadWithProgress(chlist_url, OSCAM_PATH, 'Downloading user settings...')
+
+        show_error("User settings download completed.")
     except DownloadCanceledException:
         show_error('Canceled')
     except:
@@ -131,14 +140,14 @@ def dl_tvh():
 
         selectConnections()
 
-        execute("systemctl stop service.multimedia.tvheadend.service")
-        removeDir("/storage/.kodi/userdata/addon_data/service.multimedia.tvheadend/channel")
-        removeDir("/storage/.kodi/userdata/addon_data/service.multimedia.tvheadend/input/dvb")
-        tarFile = "/storage/.kodi/userdata/addon_data/service.multimedia.tvheadend/BackUp.tar.gz"
-        downloadWithProgress(TVH_URL, tarFile, 'Downloading channel fix...')
-        extractTar(tarFile, "/")
-        os.remove(tarFile)
-        execute("systemctl restart service.multimedia.tvheadend.service")
+        with util.ServiceControl('service.multimedia.tvheadend.service'):
+            removeDir("/storage/.kodi/userdata/addon_data/service.multimedia.tvheadend/channel")
+            removeDir("/storage/.kodi/userdata/addon_data/service.multimedia.tvheadend/input/dvb")
+            tarFile = "/storage/.kodi/userdata/addon_data/service.multimedia.tvheadend/BackUp.tar.gz"
+            downloadWithProgress(TVH_URL, tarFile, 'Downloading channel fix...')
+            extractTar(tarFile, "/")
+            os.remove(tarFile)
+
         xbmc.executebuiltin('Reboot')
     except DownloadCanceledException:
         show_error('Canceled')
@@ -146,11 +155,71 @@ def dl_tvh():
         util.ERROR()
         show_error("Error")
 
+class SettingsBackup:
+    SETTINGS_BACKUP_PATH = '/storage/settings_backup/'
+
+    OSCAM_SOURCE_PATH = '/storage/.kodi/userdata/addon_data/service.softcam.oscam/config/oscam.server'
+    OSCAM_DEST_PATH = os.path.join(SETTINGS_BACKUP_PATH, 'oscam.server')
+
+    SATCONF_SOURCE_PATH = '/storage/.kodi/userdata/addon_data/script.satconf/settings.xml'
+    SATCONF_DEST_PATH = os.path.join(SETTINGS_BACKUP_PATH, 'satconf.settings.xml')
+
+    GENESISFAVS_SOURCE_PATH = '/storage/.kodi/userdata/addon_data/plugin.video.genesis/favourites.db'
+    GENESISFAVS_DEST_PATH = os.path.join(SETTINGS_BACKUP_PATH, 'genesis.favourites.db')
+
+    CONNMAN_SOURCE_PATH = '/storage/.cache/connman'
+    CONNMAN_DEST_PATH = os.path.join(SETTINGS_BACKUP_PATH, 'connman')
+
+
+    @classmethod
+    def backupOscam(cls):
+        util.LOG('Backing up oscam.server')
+        if os.path.exists(cls.OSCAM_SOURCE_PATH):
+            if os.path.getsize(cls.OSCAM_SOURCE_PATH) != 597: # i.e. is the default file
+                shutil.copy(cls.OSCAM_SOURCE_PATH, cls.OSCAM_DEST_PATH)
+
+    @classmethod
+    def backupSatconf(cls):
+        util.LOG('Backing up satconf settings.xml')
+        if os.path.exists(cls.SATCONF_SOURCE_PATH):
+            shutil.copy(cls.SATCONF_SOURCE_PATH, cls.SATCONF_DEST_PATH)
+
+    @classmethod
+    def backupGenesisFavs(cls):
+        util.LOG('Backing up genesis favourites.db')
+        if os.path.exists(cls.GENESISFAVS_SOURCE_PATH):
+            shutil.copy(cls.GENESISFAVS_SOURCE_PATH, cls.GENESISFAVS_DEST_PATH)
+
+    @classmethod
+    def backupConnman(cls):
+        util.LOG('Backing up connman')
+        if os.path.exists(cls.CONNMAN_SOURCE_PATH):
+            if os.path.exists(cls.CONNMAN_DEST_PATH):
+                try:
+                    shutil.rmtree(cls.CONNMAN_DEST_PATH)
+                except:
+                    util.ERROR()
+                    return
+
+            shutil.copytree(cls.CONNMAN_SOURCE_PATH, cls.CONNMAN_DEST_PATH)
+
+    @classmethod
+    def backupAll(cls):
+        if not os.path.exists(cls.SETTINGS_BACKUP_PATH):
+            os.makedirs(cls.SETTINGS_BACKUP_PATH)
+
+        cls.backupOscam()
+        cls.backupSatconf()
+        cls.backupGenesisFavs()
+        cls.backupConnman()
+
 
 def dl_restore():
     try:
         if not os.path.exists("/storage/backup"):
             os.makedirs("/storage/backup")
+
+        SettingsBackup.backupAll()
 
         if not backupFreeSpace() >= 500:
             util.LOG('DELETING RECORDINGS')
@@ -160,13 +229,18 @@ def dl_restore():
         # meheh. not an error
         show_error("Downloaded. Click OK to restore.")
         restore()
+        return
     except DownloadCanceledException:
-        if os.path.exists(BACKUP_PATH):
-            os.remove(BACKUP_PATH)
         show_error('Canceled')
     except:
         util.ERROR()
         show_error("Error")
+
+    #We only get here on error
+    if os.path.exists(BACKUP_PATH):
+        os.remove(BACKUP_PATH)
+    if os.path.exists(oscamBackupFile):
+        os.remove(oscamBackupFile)
 
 
 def dl_rcuconf():
@@ -190,15 +264,14 @@ def dl_tvh_sdc():
             show_error("tvheadend not installed")
             return
         show_error('Please connect the dish connection to LNB 1 (lnb closest to the usb)')
-        execute("systemctl stop service.multimedia.tvheadend.service")
-        removeDir("/storage/.kodi/userdata/addon_data/service.multimedia.tvheadend/input/linuxdvb/adapters")
-        os.makedirs("/storage/.kodi/userdata/addon_data/service.multimedia.tvheadend/input/linuxdvb/adapters")
-        downloadWithProgress(
-            "http://84.22.103.245/lnb/51438d1ecd9318be113df0e7cddf46ea",
-            "/storage/.kodi/userdata/addon_data/service.multimedia.tvheadend/input/linuxdvb/adapters/51438d1ecd9318be113df0e7cddf46ea",
-            'Setting up single dish connection...'
-        )
-        execute("systemctl restart service.multimedia.tvheadend.service")
+        with util.ServiceControl('service.multimedia.tvheadend.service'):
+            removeDir("/storage/.kodi/userdata/addon_data/service.multimedia.tvheadend/input/linuxdvb/adapters")
+            os.makedirs("/storage/.kodi/userdata/addon_data/service.multimedia.tvheadend/input/linuxdvb/adapters")
+            downloadWithProgress(
+                "http://84.22.103.245/lnb/51438d1ecd9318be113df0e7cddf46ea",
+                "/storage/.kodi/userdata/addon_data/service.multimedia.tvheadend/input/linuxdvb/adapters/51438d1ecd9318be113df0e7cddf46ea",
+                'Setting up single dish connection...'
+            )
     except DownloadCanceledException:
         show_error('Canceled')
     except:
@@ -211,20 +284,20 @@ def dl_tvh_tdc():
         if not os.path.isdir('/storage/.kodi/userdata/addon_data/service.multimedia.tvheadend'):
             show_error("tvheadend not installed")
             return
-        execute("systemctl stop service.multimedia.tvheadend.service")
-        removeDir("/storage/.kodi/userdata/addon_data/service.multimedia.tvheadend/input/linuxdvb/adapters")
-        os.makedirs("/storage/.kodi/userdata/addon_data/service.multimedia.tvheadend/input/linuxdvb/adapters")
-        downloadWithProgress(
-            "http://84.22.103.245/lnb/twin/51438d1ecd9318be113df0e7cddf46ea",
-            "/storage/.kodi/userdata/addon_data/service.multimedia.tvheadend/input/linuxdvb/adapters/51438d1ecd9318be113df0e7cddf46ea",
-            'Setting up twin dish connection...'
-        )
-        downloadWithProgress(
-            "http://84.22.103.245/lnb/twin/681e8b6ccbe787334dc80186a64734d2",
-            "/storage/.kodi/userdata/addon_data/service.multimedia.tvheadend/input/linuxdvb/adapters/681e8b6ccbe787334dc80186a64734d2",
-            'Setting up twin dish connection...'
-        )
-        execute("systemctl restart service.multimedia.tvheadend.service")
+
+        with util.ServiceControl('service.multimedia.tvheadend.service'):
+            removeDir("/storage/.kodi/userdata/addon_data/service.multimedia.tvheadend/input/linuxdvb/adapters")
+            os.makedirs("/storage/.kodi/userdata/addon_data/service.multimedia.tvheadend/input/linuxdvb/adapters")
+            downloadWithProgress(
+                "http://84.22.103.245/lnb/twin/51438d1ecd9318be113df0e7cddf46ea",
+                "/storage/.kodi/userdata/addon_data/service.multimedia.tvheadend/input/linuxdvb/adapters/51438d1ecd9318be113df0e7cddf46ea",
+                'Setting up twin dish connection...'
+            )
+            downloadWithProgress(
+                "http://84.22.103.245/lnb/twin/681e8b6ccbe787334dc80186a64734d2",
+                "/storage/.kodi/userdata/addon_data/service.multimedia.tvheadend/input/linuxdvb/adapters/681e8b6ccbe787334dc80186a64734d2",
+                'Setting up twin dish connection...'
+            )
     except DownloadCanceledException:
         show_error('Canceled')
     except:
@@ -234,7 +307,7 @@ def dl_tvh_tdc():
 
 def deleteRecordings():
     try:
-        execute("rm -rf /storage/recordings/*")
+        util.ServiceControl.execute("rm -rf /storage/recordings/*")
         return True
     except:
         util.ERROR()
@@ -254,7 +327,7 @@ def restore():
     if not os.path.exists(restore_dir):
         os.makedirs(restore_dir)
     else:
-        execute('rm -rf %s' % restore_dir)
+        util.ServiceControl.execute('rm -rf %s' % restore_dir)
         os.makedirs(restore_dir)
     shutil.move(BACKUP_PATH, restore_path)
     xbmc.sleep(1000)
@@ -303,6 +376,8 @@ def selectConnections():
 
 
 def main():
+    notifyInvalidOscamServer()
+
     if not getCredentials():
         show_error('Aborted!')
         return

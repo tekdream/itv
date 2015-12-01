@@ -1,3 +1,5 @@
+import subprocess
+
 import xbmc
 import xbmcgui
 
@@ -51,3 +53,26 @@ class Progress(object):
 
     def iscanceled(self):
         return self.dialog.iscanceled()
+
+
+class ServiceControl:
+    TEMPLATE_STOP = 'systemctl stop {0}'
+    TEMPLATE_RESTART = 'systemctl restart {0}'
+
+    def __init__(self, service):
+        self.service = service
+
+    def __enter__(self):
+        self.execute(self.TEMPLATE_STOP.format(self.service))
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.execute(self.TEMPLATE_RESTART.format(self.service))
+
+    @staticmethod
+    def execute(command_line):
+        try:
+            process = subprocess.Popen(command_line, shell=True, close_fds=True)
+            process.wait()
+        except:
+            pass

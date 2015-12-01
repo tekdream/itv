@@ -482,7 +482,7 @@
 
 <addon id="service.itv"
        name="ITV Service"
-       version="0.0.1"
+       version="0.0.6"
        provider-name="itv">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
@@ -652,14 +652,14 @@
 
 <addon id="script.satconf"
        name="SatConf"
-       version="1.0.10"
+       version="1.0.12"
        provider-name="meh">
    <requires>
      <import addon="xbmc.python" version="2.1.0"/>
      <import addon="script.module.requests" version="2.4.3"/>
      <import addon="service.softcam.oscam" version="1.0.0"/>
      <import addon="service.multimedia.tvheadend" version="1.0.0"/>
-     <import addon="service.itv" version="0.0.1"/>
+     <import addon="service.itv" version="0.0.6"/>
   </requires>
   <extension point="xbmc.python.script" library="default.py">
     <provides>executable</provides>
