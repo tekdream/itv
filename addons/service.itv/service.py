@@ -285,7 +285,11 @@ class RecordingDriveWatcher:
             return
 
         with open(self.SAVE_FILE, 'r') as f:
-            data = json.load(f)
+            try:
+                data = json.load(f)
+            except ValueError:
+                util.ERROR()
+                return
 
         if not 'mount' in data:
             return
@@ -306,6 +310,10 @@ class RecordingDriveWatcher:
         if mtime == self.lastMTime:
             return
 
+        if not xbmc.getCondVisibility('Pvr.HasTVChannels'): #This detects shutdown for our purposes - not reliable
+            util.LOG('Waiting for TVH...')
+            return
+
         util.LOG('Change detected in {0}'.format(util.cleanStrRepr(self.MEDIA_DIR_PATH)))
 
         self.lastMTime = mtime
@@ -318,6 +326,9 @@ class RecordingDriveWatcher:
                 self.mounts = []
             return
 
+        if xbmc.abortRequested:
+            return
+
         new = False
 
         for mount in mounts:
@@ -327,6 +338,9 @@ class RecordingDriveWatcher:
         for mount in self.mounts:
             if mount not in mounts:
                 self.mountRemoved(mount)
+
+        if xbmc.abortRequested:
+            return
 
         if new and not self.savedMountIsMounted():
             self.setupMount()
@@ -378,6 +392,9 @@ class RecordingDriveWatcher:
         return True
 
     def mountRemoved(self, mount):
+        if xbmc.Monitor().waitForAbort(10):
+            return
+
         if mount in self.mounts:
             self.mounts.pop(self.mounts.index(mount))
         self.save()
@@ -403,7 +420,7 @@ class RecordingDriveWatcher:
             except:
                 pass
 
-        if os.path.exists(self.RECORDINGS_PATH):
+        if os.path.exists(self.RECORDINGS_PATH) or os.path.islink(self.RECORDINGS_PATH):
             util.LOG('Failed to remove recordings path')
             return False
 

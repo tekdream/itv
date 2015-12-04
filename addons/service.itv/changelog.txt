@@ -1,3 +1,7 @@
+** 0.0.7 **
+
+Fix for service disabling recording on shutdown/reboot
+
 ** 0.0.6 **
 
 Add enabling of recording when a drive is inserted

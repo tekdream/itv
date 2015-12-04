@@ -133,12 +133,19 @@ def dl_oscam():
 
 
 def dl_tvh():
+    import kodijsonrpc
+
     try:
         if not os.path.isdir('/storage/.kodi/userdata/addon_data/service.multimedia.tvheadend'):
             show_error("tvheadend not installed")
             return
 
         selectConnections()
+
+        #Set before so live TV is working when we set it
+        util.LOG('Setting pvrmanager.syncchannelgroups to true...')
+        result = kodijsonrpc.rpc.Settings.SetSettingValue(setting='pvrmanager.syncchannelgroups', value=True)
+        util.LOG('Result: {0}'.format(result))
 
         with util.ServiceControl('service.multimedia.tvheadend.service'):
             removeDir("/storage/.kodi/userdata/addon_data/service.multimedia.tvheadend/channel")
@@ -320,6 +327,15 @@ def clear_recordings():
     else:
         show_error("Error")
 
+def unmountMedia():
+    try:
+        for mount in os.listdir('/media'):
+            try:
+                util.ServiceControl.execute('umount /media/{0}'.format(mount))
+            except:
+                util.ERROR()
+    except:
+        util.ERROR()
 
 def restore():
     restore_path = '/storage/.restore/{0}'.format(RESTORE_FILE)
@@ -331,6 +347,8 @@ def restore():
         os.makedirs(restore_dir)
     shutil.move(BACKUP_PATH, restore_path)
     xbmc.sleep(1000)
+
+    unmountMedia()
     xbmc.executebuiltin('Reboot')
 
 
@@ -383,8 +401,8 @@ def main():
         return
 
     options = [
-        ('dl_oscam', '{0}. Download User Settings'),
-        # ('dl_tvh', '{0}. Download Channel Fix')
+        ('dl_oscam',   '{0}. Download User Settings'),
+        ('dl_tvh',     '{0}. Download Channel Fix'),
         ('dl_restore', '{0}. Download Restore File'),
         ('dl_rcuconf', '{0}. Download Big Remote xml'),
         ('dl_tvh_sdc', '{0}. Single Dish Connection'),
