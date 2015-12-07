@@ -482,7 +482,7 @@
 
 <addon id="service.itv"
        name="ITV Service"
-       version="0.0.7"
+       version="0.0.8"
        provider-name="itv">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>

@@ -1,3 +1,7 @@
+** 0.0.8 **
+
+Update advancedsettings.xml
+
 ** 0.0.7 **
 
 Fix for service disabling recording on shutdown/reboot

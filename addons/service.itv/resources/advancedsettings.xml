@@ -1,12 +1,12 @@
 <advancedsettings>
   <network>
     <buffermode>1</buffermode>
-    <readbufferfactor>20</readbufferfactor>
+    <cachemembuffersize>52428800</cachemembuffersize>
   </network>
   <pvr>
     <minvideocachelevel>0</minvideocachelevel>O
     <minaudiocachelevel>0</minaudiocachelevel>
   </pvr>
-    <imageres>480</imageres>
-    <fanartres>720</fanartres>
+  <imageres>480</imageres>
+  <fanartres>720</fanartres>
 </advancedsettings>

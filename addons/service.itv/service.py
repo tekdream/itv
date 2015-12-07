@@ -25,7 +25,7 @@ def reboot():
 
 
 class AdvancedSettingsUpdater:
-    ADVANCED_SETTINGS_VERSION = 1
+    ADVANCED_SETTINGS_VERSION = 2
     @staticmethod
     def currentVersion():
         advancedSettingsVersion = os.path.join(KODI_PROFILE, 'advancedsettings.version')
@@ -152,6 +152,9 @@ class SettingsRestore:
     GENESISFAVS_DEST_PATH = '/storage/.kodi/userdata/addon_data/plugin.video.genesis/favourites.db'
     GENESISFAVS_SOURCE_PATH = os.path.join(SETTINGS_BACKUP_PATH, 'genesis.favourites.db')
 
+    # TV26_DB_DEST_PATH = '/storage/.kodi/userdata/Database/TV26.db'
+    # TV26_DB_SOURCE_PATH = os.path.join(SETTINGS_BACKUP_PATH, 'TV26.db')
+
     CONNMAN_DEST_PATH = '/storage/.cache/connman'
     CONNMAN_SOURCE_PATH = os.path.join(SETTINGS_BACKUP_PATH, 'connman')
 
@@ -192,6 +195,11 @@ class SettingsRestore:
         util.LOG('Restoring genesis favourites.db')
         return cls.restoreFile(cls.GENESISFAVS_SOURCE_PATH, cls.GENESISFAVS_DEST_PATH)
 
+    # @classmethod
+    # def restoreTV26_db(cls):
+    #     util.LOG('Restoring TV26.db')
+    #     return cls.restoreFile(cls.TV26_DB_SOURCE_PATH, cls.TV26_DB_DEST_PATH)
+
     @classmethod
     def restoreConnman(cls):
         util.LOG('Restoring connman')
@@ -218,6 +226,7 @@ class SettingsRestore:
         cls.restoreOscam()
         cls.restoreSatconf()
         cls.restoreGenesisFavs()
+        # cls.restoreTV26_db()
         cls.restoreConnman()
 
 
