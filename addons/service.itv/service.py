@@ -483,7 +483,24 @@ class RecordingDriveWatcher:
             except:
                 util.ERROR()
 
-        util.notify('Recording {0}'.format(enable and 'Enabled' or 'Disabled'))
+        msg = 'Recording {0}'.format(enable and 'Enabled' or 'Disabled')
+        util.LOG(msg)
+        util.notify(msg)
+
+    def recordingEnabledTVH(self):
+        for acf in os.listdir(self.ACCESS_CONTROL_DIR_PATH):
+            full = os.path.join(self.ACCESS_CONTROL_DIR_PATH, acf)
+            try:
+                with open(full, 'r') as f:
+                    data = json.load(f)
+
+                if data['dvr']:
+                    return True
+            except:
+                util.ERROR()
+                continue
+
+        return False
 
     def writeID(self, mount):
         idPath = os.path.join(self.MEDIA_DIR_PATH, mount, self.ID_FILE)
@@ -555,7 +572,14 @@ class RecordingDriveWatcher:
 
     @property
     def hasMountSetup(self):
-        return bool(self.mount)
+        return self.mount or not self.recordingEnabledTVH()
+
+    @property
+    def recordingIllegallyEnabled(self):
+        if not self.recordingEnabledTVH():
+            return False
+
+        return not self.mount
 
 
 class Service(xbmc.Monitor):
@@ -605,7 +629,7 @@ class Service(xbmc.Monitor):
         try:
             DirectoryCleaner.cleanLostAndFound()
             DirectoryCleaner.cleanAddonsPackages()
-            if not self.recordingDriveWatcher.hasMountSetup:
+            if self.recordingDriveWatcher.recordingIllegallyEnabled:
                 self.recordingDriveWatcher.enableRecording(False)
                 DirectoryCleaner.cleanBadRecordings()
             #DirectoryCleaner.cleanThumbnails()
